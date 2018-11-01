@@ -26,7 +26,9 @@ var app = (function () {
             y: evt.clientY - rect.top
         };
     };
-
+    function showGreeting(message) {
+        $("#greetings").append("<tr><td>" + message + "</td></tr>");
+    }
 
     var connectAndSubscribe = function () {
         console.info('Connecting to WS...');
@@ -34,11 +36,14 @@ var app = (function () {
         stompClient = Stomp.over(socket);
         
         //subscribe to /topic/TOPICXX when connections succeed
+
+
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/TOPICXX', function (eventbody) {
+            stompClient.subscribe('/topic/newpoint"', function (eventbody) {
                 
-                
+                showGreeting(JSON.parse(eventbody.body).content);
+                alert("I am an alert box!");
             });
         });
 
@@ -56,11 +61,25 @@ var app = (function () {
         },
 
         publishPoint: function(px,py){
-            var pt=new Point(px,py);
+            var pt=new Point(px,py);            
             console.info("publishing point at "+pt);
             addPointToCanvas(pt);
-
             //publicar el evento
+
+            var sock= new SockJS('/stompendpoint');
+            stompClient= Stomp.over(sock);
+
+            stompClient.connect({}, function (frame){
+                console.log('HOLA MUNDO');
+                console.log('Conectado'+frame);
+
+                stompClient.send("/topic/newpoint", {}, JSON.stringify({x:10,y:10}));
+                console.log('HOLA MUNDO1');
+                stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
+                console.log('HOLA MUNDO2');
+
+            });
+     
         },
 
         disconnect: function () {
@@ -69,7 +88,9 @@ var app = (function () {
             }
             setConnected(false);
             console.log("Disconnected");
-        }
+        },
+
     };
+
 
 })();

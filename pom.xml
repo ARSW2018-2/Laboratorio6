@@ -62,8 +62,13 @@
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
             <version>3.1.0</version>
-        </dependency>                
-                                                                
+        </dependency>
+        <dependency>
+            <groupId>edu.eci.arsw.msgbroker</groupId>
+            <artifactId>websockets-msbroker-example</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>
