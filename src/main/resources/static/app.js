@@ -35,14 +35,13 @@ var app = (function () {
         var socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
         
-        //subscribe to /topic/TOPICXX when connections succeed
 
 
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic/newpoint"', function (eventbody) {
-                
-                showGreeting(JSON.parse(eventbody.body).content);
+                var point =JSON.parse(eventbody.body);
+                addPointToCanvas(point);
                 alert("I am an alert box!");
             });
         });
@@ -57,6 +56,7 @@ var app = (function () {
             var can = document.getElementById("canvas");
             
             //websocket connection
+
             connectAndSubscribe();
         },
 
@@ -69,16 +69,7 @@ var app = (function () {
             var sock= new SockJS('/stompendpoint');
             stompClient= Stomp.over(sock);
 
-            stompClient.connect({}, function (frame){
-                console.log('HOLA MUNDO');
-                console.log('Conectado'+frame);
-
-                stompClient.send("/topic/newpoint", {}, JSON.stringify({x:10,y:10}));
-                console.log('HOLA MUNDO1');
-                stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
-                console.log('HOLA MUNDO2');
-
-            });
+            stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
      
         },
 
@@ -91,6 +82,16 @@ var app = (function () {
         },
 
     };
+    
+    function sendPoint(x,y) {
+        stompClient.send("/topic/newpoint", {}, JSON.stringify({x:10,y:10}));
+    }
+
+    function showObject(pt) {
+        stompClient.send("/topic/newpoint", {}, JSON.stringify(pt));
+        console.log("Que es"+pt.toString());
+    }
+
 
 
 })();
