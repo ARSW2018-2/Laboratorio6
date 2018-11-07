@@ -42,7 +42,7 @@ var app = (function () {
             stompClient.subscribe('/topic/newpoint"', function (eventbody) {
                 var point =JSON.parse(eventbody.body);
                 addPointToCanvas(point);
-                alert("I am an alert box!");
+  
             });
         });
 
@@ -64,10 +64,11 @@ var app = (function () {
             var pt=new Point(px,py);            
             console.info("publishing point at "+pt);
             addPointToCanvas(pt);
+            alert("The POints, in x:"+px+"point in y: "+py);
             //publicar el evento
 
-            var sock= new SockJS('/stompendpoint');
-            stompClient= Stomp.over(sock);
+            //var sock= new SockJS('/stompendpoint');
+            //stompClient= Stomp.over(sock);
 
             stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
      
