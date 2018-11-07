@@ -64,12 +64,12 @@ var app = (function () {
             var pt=new Point(px,py);            
             console.info("publishing point at "+pt);
             addPointToCanvas(pt);
-            alert("The POints, in x:"+px+"point in y: "+py);
-            //publicar el evento
-
-            //var sock= new SockJS('/stompendpoint');
-            //stompClient= Stomp.over(sock);
-
+            //alert("The POints, in x:"+px+"point in y: "+py);
+            var dibujo= document.getElementById("canvas");
+            var lienzo = dibujo.getContext("2d");
+            lienzo.beginPath();
+            lienzo.arc(px,py,1,0,2*Math.PI);
+            lienzo.stroke();
             stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
      
         },
