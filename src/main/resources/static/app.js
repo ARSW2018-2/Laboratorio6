@@ -31,6 +31,32 @@ var app = (function () {
     function showGreeting(message) {
         $("#greetings").append("<tr><td>" + message + "</td></tr>");
     }
+    var setSsion= function(sesion){
+        console.info("QUE ASIGNA"+sesion);
+        seson=sesion; 
+    }
+    var getSesion=function (){
+        console.info("QUE RERTORNA"+seson);
+        return{
+            
+          seson  
+        };
+    }
+    
+    publishPoint= function(px,py,seson){
+            var pt=new Point(px,py);       
+            console.log("puntos"+px);  
+            console.info("publishing point at "+pt);
+            addPointToCanvas(pt);
+            //alert("The POints, in x:"+px+"point in y: "+py);
+            var dibujo= document.getElementById("canvas");
+            var lienzo = dibujo.getContext("2d");
+            lienzo.beginPath();
+            lienzo.arc(px,py,1,0,2*Math.PI);
+            lienzo.stroke();
+            console.info("LA SESION ES"+seson);
+            stompClient.send("/topic/newpoint"+'.'+seson, {}, JSON.stringify(pt)); 
+        }
 
     var connectAndSubscribe = function (seson) {
         console.info('Connecting to WS...');
@@ -52,6 +78,8 @@ var app = (function () {
     
 
     return {
+        
+         
          conectar: function(sesion){
             console.log("sesion que es "+sesion);  
             if(sesion===null||sesion=='' ){
@@ -60,6 +88,8 @@ var app = (function () {
                 return;
             }
             seson= sesion;
+            ser=null;
+            setSsion(sesion);
             console.log("sesion que es "+seson);  
             connectAndSubscribe(seson);
             
@@ -70,6 +100,13 @@ var app = (function () {
         init: function () {
             var can = document.getElementById("canvas");
             
+            canvas.addEventListener("mousedown",function (e){
+                point=getMousePosition(e);
+                var temp=getSesion();
+                publishPoint(point.x,point.y,temp);
+                
+                
+            })
             //websocket connection
 
             //connectAndSubscribe();
