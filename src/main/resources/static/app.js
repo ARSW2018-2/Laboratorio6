@@ -11,6 +11,8 @@ var app = (function () {
 
     var seson=null;
     
+    var poligonObject='/topic/newpolygon.';
+    
     var addPointToCanvas = function (point) {        
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
@@ -55,7 +57,7 @@ var app = (function () {
             lienzo.arc(px,py,1,0,2*Math.PI);
             lienzo.stroke();
             console.info("LA SESION ES"+seson);
-            stompClient.send("/topic/newpoint"+'.'+seson, {}, JSON.stringify(pt)); 
+            stompClient.send("/app/newpoint"+'.'+seson, {}, JSON.stringify(pt)); 
         }
 
     var connectAndSubscribe = function (seson) {
