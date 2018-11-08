@@ -100,13 +100,21 @@ var app = (function () {
         init: function () {
             var can = document.getElementById("canvas");
             
-            canvas.addEventListener("mousedown",function (e){
-                point=getMousePosition(e);
-                var temp=getSesion();
-                publishPoint(point.x,point.y,temp);
-                
-                
-            })
+                canvas.addEventListener("mousedown",function (e){
+                    point=getMousePosition(e);
+
+                    var temp=getSesion();
+                    if(temp==null || temp==''){
+                        
+                        alert("Id de sesion invalido");
+                        return; 
+                    }else{
+                       publishPoint(point.x,point.y,temp);
+                }
+                    
+
+                })
+        
             //websocket connection
 
             //connectAndSubscribe();
