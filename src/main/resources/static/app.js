@@ -9,6 +9,8 @@ var app = (function () {
     
     var stompClient = null;
 
+    var seson=null;
+    
     var addPointToCanvas = function (point) {        
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
@@ -30,16 +32,15 @@ var app = (function () {
         $("#greetings").append("<tr><td>" + message + "</td></tr>");
     }
 
-    var connectAndSubscribe = function () {
+    var connectAndSubscribe = function (seson) {
         console.info('Connecting to WS...');
         var socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
         
-
-
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/newpoint"', function (eventbody) {
+            console.log("sesion que es "+seson);
+            stompClient.subscribe('/topic/newpoint"'+'.'+ seson, function (eventbody) {
                 var point =JSON.parse(eventbody.body);
                 addPointToCanvas(point);
   
@@ -51,17 +52,33 @@ var app = (function () {
     
 
     return {
+         conectar: function(sesion){
+            console.log("sesion que es "+sesion);  
+            if(sesion===null||sesion=='' ){
+                console.log("EEROR CUANTICO");
+                alert("Id de sesion invalido");
+                return;
+            }
+            seson= sesion;
+            console.log("sesion que es "+seson);  
+            connectAndSubscribe(seson);
+            
+            //$('#sendNum').prop('disabled',true);
+            //$('#conec').prop('disabled',false);            
+        },
 
         init: function () {
             var can = document.getElementById("canvas");
             
             //websocket connection
 
-            connectAndSubscribe();
+            //connectAndSubscribe();
         },
 
+        
         publishPoint: function(px,py){
-            var pt=new Point(px,py);            
+            var pt=new Point(px,py);       
+            console.log("puntos"+px);  
             console.info("publishing point at "+pt);
             addPointToCanvas(pt);
             //alert("The POints, in x:"+px+"point in y: "+py);
@@ -70,8 +87,8 @@ var app = (function () {
             lienzo.beginPath();
             lienzo.arc(px,py,1,0,2*Math.PI);
             lienzo.stroke();
-            stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
-     
+            console.info("LA SESION ES"+seson);
+            stompClient.send("/topic/newpoint"+'.'+seson, {}, JSON.stringify(pt)); 
         },
 
         disconnect: function () {
@@ -84,15 +101,5 @@ var app = (function () {
 
     };
     
-    function sendPoint(x,y) {
-        stompClient.send("/topic/newpoint", {}, JSON.stringify({x:10,y:10}));
-    }
-
-    function showObject(pt) {
-        stompClient.send("/topic/newpoint", {}, JSON.stringify(pt));
-        console.log("Que es"+pt.toString());
-    }
-
-
 
 })();
